@@ -31,8 +31,7 @@
 
   function ensureDocs(){
     try{
-      const vehicles=JSON.parse(localStorage.getItem('autoGestioVehicles')||'[]');if(!Array.isArray(vehicles))return false;
-      const docs=[];
+      const vehicles=JSON.parse(localStorage.getItem('autoGestioVehicles')||'[]');if(!Array.isArray(vehicles))return false;const docs=[];
       T.forEach(t=>{const vi=vehicles.findIndex(v=>match(v,t));if(vi<0)return;t.docs.forEach(d=>docs.push({vehicleIndex:vi,vehicle:t.brand+' '+t.model,title:d.title,url:d.url,kind:d.kind,source:'Auto Gestió'}));});
       let old=[];try{old=JSON.parse(localStorage.getItem('autoGestioDocuments')||'[]')}catch(e){}
       const fresh=JSON.stringify(docs);if(JSON.stringify(old)!==fresh){localStorage.setItem('autoGestioDocuments',fresh);return true}return false;
@@ -40,14 +39,16 @@
   }
 
   function nextMultiple(km,step,first){km=Math.max(0,Number(km)||0);if(km<first)return first;return Math.ceil((km+1)/step)*step;}
+
   function planFor(v){
     const km=Number(v.km)||0,n=norm(v.brand)+'|'+norm(v.model);
     if(n==='jeep|compass'&&Number(v.year)===2017){
-      const next=nextMultiple(km,20000,20000),major=next%40000===0;
-      const items=['Canvi d’oli del motor i filtre d’oli','Substitució del filtre de combustible','Substitució de l’element del filtre d’aire del motor','Comprovació de nivells de tots els fluids','Comprovació de pastilles de fre davanteres i posteriors','Comprovació de tubs d’escapament, alimentació de combustible i frens','Comprovació de maneguets, juntes, pneumàtics, desgast i pressions','Comprovació d’elements elèctrics, il·luminació i indicadors','Comprovació del filtre antipol·len de l’aire condicionat','Comprovació/neteja/lubricació de canaletes i elements mòbils del sostre, si n’hi ha'];
-      if(major)items.push('Revisions addicionals corresponents al tram de 40.000 km del pla');
-      if(next>=120000)items.push('Revisar especialment el calendari de distribució i corretges segons l’ús i l’any del vehicle');
-      return {nextKm:next,remaining:next-km,interval:'20.000 km o 12 mesos',items,note:'El sistema de degradació de l’oli pot demanar el servei abans. Si el quadre dona avís d’oli/revisió, preval l’avís del vehicle.'};
+      const next=nextMultiple(km,20000,20000),extra=[];
+      const items=['Canvi d’oli del motor i filtre d’oli','Substitució del filtre de combustible','Substitució de l’element del filtre d’aire del motor','Comprovació de nivells de tots els fluids','Comprovació de pastilles de fre davanteres i posteriors','Comprovació de tubs d’escapament, alimentació de combustible i frens','Comprovació de maneguets, juntes, pneumàtics, desgast i pressions','Comprovació del fre d’estacionament elèctric','Comprovació de l’estat de les escombretes i eixugaparabrises','Comprovació d’elements elèctrics, il·luminació i indicadors','Comprovació del filtre antipol·len de l’aire condicionat'];
+      if(next%60000===0)extra.push('Substitució del líquid de frens (60.000 km / 2 anys)','Substitució de les corretges dels òrgans auxiliars (60.000 km / 3 anys)');
+      if(next%120000===0)extra.push('Substitució de la corretja dentada de distribució (120.000 km / 3 anys, segons pla)','Substitució del líquid de frens','Substitució de les corretges dels òrgans auxiliars');
+      if(next%240000===0)extra.push('Substitució del líquid refrigerant (240.000 km / 10 anys)');
+      return {nextKm:next,remaining:next-km,interval:'20.000 km o 12 mesos',items:items.concat(extra),note:'El sistema de degradació de l’oli pot demanar el servei abans. Si el quadre dona avís d’oli/revisió, preval l’avís del vehicle. La transmissió automàtica figura al pla com For Life.'};
     }
     if(n==='husqvarna|norden 901'){
       const next=nextMultiple(km,15000,1000),at30=next%30000===0;
@@ -78,10 +79,6 @@
   }
   function addFleetPanel(){if(document.getElementById('fleetPanel'))return;const el=document.createElement('section');el.className='card';el.id='fleetPanel';el.innerHTML='<div class="hero"><div><h2>🚗 Parc real</h2><div class="muted">Ara mateix gestionem només la Husqvarna Norden 901 i el Jeep Compass. Els altres vehicles de prova s’han eliminat.</div></div></div>';document.querySelector('main')?.insertBefore(el,document.querySelector('.tabs'));}
 
-  function start(){
-    const changed=migrateFleet(),docsChanged=ensureDocs();
-    if(changed||docsChanged){location.reload();return;}
-    addFleetPanel();enhanceTasks();if(typeof renderAll==='function')renderAll();setTimeout(()=>{addDocsBox();addManualSearchToForm();},100);
-  }
+  function start(){const changed=migrateFleet(),docsChanged=ensureDocs();if(changed||docsChanged){location.reload();return}addFleetPanel();enhanceTasks();if(typeof renderAll==='function')renderAll();setTimeout(()=>{addDocsBox();addManualSearchToForm();},100);}
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(start,0));else setTimeout(start,0);
 })();
