@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0b1220">
+<meta name="description" content="Auto Gestió — control i manteniment dels teus vehicles">
+<link rel="icon" type="image/jpeg" href="grok_1792261932370.jpg">
+<link rel="apple-touch-icon" href="grok_1792261932370.jpg">
+<title>Auto Gestió</title>
+<style>
+:root{--bg:#0b1220;--card:#151f32;--card2:#1b2940;--text:#f4f7fb;--muted:#9eabc0;--accent:#3b82f6;--ok:#22c55e;--warn:#f59e0b;--danger:#ef4444}*{box-sizing:border-box}body{margin:0;background:linear-gradient(180deg,#0b1220,#111827);font-family:system-ui,-apple-system,Segoe UI,sans-serif;color:var(--text);min-height:100vh}header{padding:22px 18px 14px;display:flex;align-items:center;gap:12px;position:sticky;top:0;background:rgba(11,18,32,.94);backdrop-filter:blur(12px);z-index:5}header img{width:48px;height:48px;border-radius:13px;object-fit:cover}h1{font-size:24px;margin:0}main{max-width:760px;margin:auto;padding:8px 16px 100px}.hero{padding:18px 2px}.hero h2{font-size:29px;margin:0 0 6px}.hero p{margin:0;color:var(--muted)}.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.card{background:var(--card);border:1px solid #26344d;border-radius:18px;padding:16px;margin-bottom:12px;box-shadow:0 8px 25px rgba(0,0,0,.16)}.card h3{margin:0 0 12px;font-size:17px}.empty{text-align:center;padding:30px 15px;color:var(--muted)}button{border:0;border-radius:12px;padding:12px 15px;font-weight:700;font-size:15px;cursor:pointer}.primary{background:var(--accent);color:white}.secondary{background:var(--card2);color:white}.danger{background:#3a1820;color:#ffb4bd}.vehicle{display:flex;align-items:center;gap:14px}.vehicle img{width:78px;height:60px;object-fit:cover;border-radius:12px;background:#202b3e}.vehicle h3{margin:0 0 3px}.vehicle small{color:var(--muted)}.status{display:flex;justify-content:space-between;padding:11px 0;border-bottom:1px solid #26344d}.status:last-child{border-bottom:0}.dot{font-weight:800}.ok{color:var(--ok)}.warn{color:var(--warn)}.dangerText{color:var(--danger)}label{display:block;font-size:13px;color:var(--muted);margin:12px 0 6px}input,select{width:100%;padding:13px;border-radius:11px;border:1px solid #31415c;background:#0f1727;color:white;font-size:15px}form{display:none}.tag{display:inline-flex;padding:6px 10px;border-radius:999px;background:#24324a;font-size:13px;font-weight:700}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.bottom{position:fixed;bottom:0;left:0;right:0;background:rgba(11,18,32,.97);border-top:1px solid #26344d;padding:10px 16px;display:flex;justify-content:center;z-index:6}.bottom button{width:min(700px,100%)}
+</style>
+</head>
+<body>
+<header><img src="grok_1792261932370.jpg" alt="Auto Gestió"><div><h1>Auto Gestió</h1><small style="color:var(--muted)">El control dels teus vehicles</small></div></header>
+<main>
+<section class="hero"><h2>Els meus vehicles</h2><p>Revisions, ITV, assegurança i documentació, tot controlat.</p></section>
+<section id="vehicles"></section>
+<section id="formCard" class="card" style="display:none">
+<h3>➕ Afegir vehicle</h3>
+<form id="vehicleForm" style="display:block">
+<label>Tipus</label><select id="type"><option>Cotxe</option><option>Moto</option><option>Furgoneta</option><option>Altres</option></select>
+<label>Marca</label><input id="brand" required placeholder="Ex. BMW">
+<label>Model</label><input id="model" required placeholder="Ex. X3 20d">
+<label>Any</label><input id="year" type="number" min="1950" max="2100" placeholder="2021">
+<label>Matrícula</label><input id="plate" placeholder="1234 ABC">
+<label>Quilometratge actual</label><input id="km" type="number" min="0" placeholder="68000">
+<label>Etiqueta mediambiental</label><select id="eco"><option value="">Sense indicar</option><option>0 — Blau</option><option>ECO — Blau/verd</option><option>B — Groga</option><option>C — Verda</option><option>Sense distintiu</option><option>Desconeguda</option></select>
+<label>Data ITV</label><input id="itv" type="date">
+<label>Data assegurança</label><input id="insurance" type="date">
+<label>Pròxima revisió (km)</label><input id="serviceKm" type="number" min="0" placeholder="70000">
+<label>Pròxima revisió (data)</label><input id="serviceDate" type="date">
+<div class="actions"><button class="primary" type="submit">Guardar vehicle</button><button class="secondary" type="button" id="cancel">Cancel·lar</button></div>
+</form></section>
+<section id="detail"></section>
+</main>
+<div class="bottom"><button class="primary" id="add">＋ Afegir vehicle</button></div>
+<script>
+const KEY='autoGestioVehicles';let vehicles=JSON.parse(localStorage.getItem(KEY)||'[]');let selected=null;
+const $=id=>document.getElementById(id);const save=()=>localStorage.setItem(KEY,JSON.stringify(vehicles));
+function dateText(d){if(!d)return'—';return new Date(d+'T12:00:00').toLocaleDateString('ca-ES')}
+function days(d){if(!d)return null;return Math.ceil((new Date(d+'T12:00:00')-new Date())/86400000)}
+function statusDate(d){let n=days(d);if(n===null)return '<span>—</span>';if(n<0)return '<span class="dangerText">Vençut</span>';if(n<=30)return `<span class="warn">${n} dies</span>`;return `<span class="ok">${n} dies</span>`}
+function render(){const el=$('vehicles');if(!vehicles.length){el.innerHTML='<div class="card empty">Encara no tens cap vehicle.<br><br>Afegeix el primer vehicle i comencem a controlar-lo.</div>';return}el.innerHTML=vehicles.map((v,i)=>`<div class="card"><div class="vehicle"><img src="${v.photo||'grok_1792261932370.jpg'}"><div style="flex:1"><h3>${v.brand} ${v.model}</h3><small>${v.type} · ${v.plate||'Sense matrícula'} · ${(v.km||0).toLocaleString('ca-ES')} km</small><div style="margin-top:7px"><span class="tag">${v.eco||'Etiqueta pendent'}</span></div></div></div><div class="grid" style="margin-top:14px"><div class="card" style="margin:0;padding:11px"><small>ITV</small><br>${dateText(v.itv)}<br>${statusDate(v.itv)}</div><div class="card" style="margin:0;padding:11px"><small>Assegurança</small><br>${dateText(v.insurance)}<br>${statusDate(v.insurance)}</div></div><div class="actions"><button class="primary" onclick="openVehicle(${i})">Veure fitxa</button><button class="secondary" onclick="editVehicle(${i})">Editar</button><button class="danger" onclick="removeVehicle(${i})">Eliminar</button></div></div>`).join('')}
+function openVehicle(i){selected=i;const v=vehicles[i];$('detail').innerHTML=`<div class="card"><h3>🚗 ${v.brand} ${v.model}</h3><div class="status"><span>Tipus</span><b>${v.type}</b></div><div class="status"><span>Matrícula</span><b>${v.plate||'—'}</b></div><div class="status"><span>Km actuals</span><b>${(v.km||0).toLocaleString('ca-ES')} km</b></div><div class="status"><span>Etiqueta mediambiental</span><b>${v.eco||'Pendent'}</b></div><div class="status"><span>ITV</span><b>${dateText(v.itv)} · ${statusDate(v.itv)}</b></div><div class="status"><span>Assegurança</span><b>${dateText(v.insurance)} · ${statusDate(v.insurance)}</b></div><div class="status"><span>Pròxima revisió</span><b>${v.serviceKm?(v.serviceKm.toLocaleString('ca-ES')+' km'):''}${v.serviceDate?' · '+dateText(v.serviceDate):''}</b></div><div class="actions"><button class="secondary" onclick="closeDetail()">Tancar</button></div></div>`;window.scrollTo({top:document.body.scrollHeight,behavior:'smooth'})}
+function closeDetail(){$('detail').innerHTML=''}
+function editVehicle(i){const v=vehicles[i];$('formCard').style.display='block';['type','brand','model','year','plate','km','eco','itv','insurance','serviceKm','serviceDate'].forEach(k=>$(k).value=v[k]??'');$('vehicleForm').dataset.edit=i;window.scrollTo({top:document.body.scrollHeight,behavior:'smooth'})}
+function removeVehicle(i){if(confirm('Eliminar aquest vehicle?')){vehicles.splice(i,1);save();closeDetail();render()}}
+$('add').onclick=()=>{ $('vehicleForm').reset();delete $('vehicleForm').dataset.edit;$('formCard').style.display='block';window.scrollTo({top:document.body.scrollHeight,behavior:'smooth'})};$('cancel').onclick=()=>{$('formCard').style.display='none'};
+$('vehicleForm').onsubmit=e=>{e.preventDefault();const data={type:$('type').value,brand:$('brand').value.trim(),model:$('model').value.trim(),year:$('year').value,plate:$('plate').value.trim().toUpperCase(),km:Number($('km').value)||0,eco:$('eco').value,itv:$('itv').value,insurance:$('insurance').value,serviceKm:Number($('serviceKm').value)||0,serviceDate:$('serviceDate').value};const idx=$('vehicleForm').dataset.edit;if(idx!==undefined)vehicles[Number(idx)]={...vehicles[Number(idx)],...data};else vehicles.push(data);save();$('formCard').style.display='none';render()};render();
+</script>
+</body></html>
