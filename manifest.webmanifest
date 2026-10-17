@@ -1,0 +1,19 @@
+{
+  "name": "Auto Gestió",
+  "short_name": "Auto Gestió",
+  "description": "Control i manteniment dels teus vehicles",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0b1220",
+  "theme_color": "#0b1220",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "grok_1792261932370.jpg",
+      "sizes": "any",
+      "type": "image/jpeg",
+      "purpose": "any maskable"
+    }
+  ]
+}
