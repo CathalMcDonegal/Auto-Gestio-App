@@ -5,7 +5,7 @@ window.AUTO_GESTIO_MAINTENANCE_SOURCES={
  Ford:{label:'Ford España',url:'https://www.ford.es/soporte/comprobacion-intervalos-mantenimiento'},
  Volkswagen:{label:'Volkswagen España',url:'https://www.volkswagen.es/es/clientes/mantenimiento-reparaciones/revisiones-itv.html'},
  SEAT:{label:'SEAT España',url:'https://www.seat.es/posventa/mantenimiento'},
- Skoda:{label:'Škoda España',url:'https://www.skoda.es/servicios-posventa'},
+ Skoda:{label:'Škoda España',url:'https://www.skoda.es/servicios-posventa/plan-mantenimiento'},
  BMW:{label:'BMW España',url:'https://www.bmw.es/es/topics/owners/service-and-maintenance.html'},
  Mercedes:{label:'Mercedes-Benz España',url:'https://www.mercedes-benz.es/passengercars/services.html'},
  Nissan:{label:'Nissan España',url:'https://www.nissan.es/servicios/servicio-oficial.html'},
@@ -16,11 +16,20 @@ window.AUTO_GESTIO_MAINTENANCE_SOURCES={
  Peugeot:{label:'Peugeot España',url:'https://www.peugeot.es/mantenimiento.html'},
  Citroen:{label:'Citroën España',url:'https://www.citroen.es/mantenimiento.html'},
  Opel:{label:'Opel España',url:'https://www.opel.es/servicios/mantenimiento.html'},
- Honda:{label:'Honda España',url:'https://www.honda.es/cars/owners/maintenance.html'},
+ Honda:{label:'Honda España',url:'https://motos.honda.es/manuales/'},
+ Husqvarna:{label:'Husqvarna Motorcycles España',url:'https://www.husqvarna-motorcycles.com/es-es/service/husqvarna-motorcycles-app/street.html'},
  Yamaha:{label:'Yamaha Motor España',url:'https://www.yamaha-motor.eu/es/es/service-support/'},
  Suzuki:{label:'Suzuki España',url:'https://auto.suzuki.es/posventa/'},
  Kawasaki:{label:'Kawasaki España',url:'https://www.kawasaki.es/es/service'},
  Mazda:{label:'Mazda España',url:'https://www.mazda.es/servicio/'},
  Volvo:{label:'Volvo Cars España',url:'https://www.volvocars.com/es/l/servicio-y-mantenimiento/'},
- Dacia:{label:'Dacia España',url:'https://www.dacia.es/mantenimiento.html'}
+ Dacia:{label:'Dacia España',url:'https://www.dacia.es/mantenimiento.html'},
+ Jeep:{label:'Jeep España / Mopar',url:'https://es.jeep.com/services.html'}
 };
+// Càrrega posterior per no tocar la base estable de l'app.
+(function(){
+  const s=document.createElement('script');
+  s.src='fleet-maintenance.js?v=20261017';
+  s.defer=true;
+  document.head.appendChild(s);
+})();
