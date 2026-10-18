@@ -1,0 +1,2 @@
+self.addEventListener('notificationclick',event=>{event.notification.close();event.waitUntil(clients.matchAll({type:'window',includeUncontrolled:true}).then(list=>{for(const c of list){if('focus'in c)return c.focus();}return clients.openWindow('./');}));});
+self.addEventListener('message',event=>{const d=event.data||{};if(d.type==='SHOW_REMINDER'){event.waitUntil(self.registration.showNotification(d.title||'Auto Gestió',{body:d.body||'',icon:'grok_1792261932370.jpg',badge:'grok_1792261932370.jpg',tag:d.tag||'auto-gestio-reminder',renotify:false,data:{url:'./'}}));}});
