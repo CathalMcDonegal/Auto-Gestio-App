@@ -36,4 +36,8 @@ window.AUTO_GESTIO_MAINTENANCE_SOURCES={
   p.src='photo-storage.js?v=20261018';
   p.defer=true;
   document.head.appendChild(p);
+  const m=document.createElement('script');
+  m.src='app-manual.js?v=20261018';
+  m.defer=true;
+  document.head.appendChild(m);
 })();
