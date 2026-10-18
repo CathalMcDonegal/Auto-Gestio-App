@@ -28,16 +28,6 @@ window.AUTO_GESTIO_MAINTENANCE_SOURCES={
 };
 // Càrrega posterior per no tocar la base estable de l'app.
 (function(){
-  const s=document.createElement('script');
-  s.src='fleet-maintenance.js?v=20261018';
-  s.defer=true;
-  document.head.appendChild(s);
-  const p=document.createElement('script');
-  p.src='photo-storage.js?v=20261018';
-  p.defer=true;
-  document.head.appendChild(p);
-  const m=document.createElement('script');
-  m.src='app-manual.js?v=20261018';
-  m.defer=true;
-  document.head.appendChild(m);
+  const files=['fleet-maintenance.js?v=20261018','photo-storage.js?v=20261018','app-manual.js?v=20261018','app-fixes.js?v=20261018'];
+  files.forEach(src=>{const s=document.createElement('script');s.src=src;s.defer=true;document.head.appendChild(s);});
 })();
