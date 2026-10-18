@@ -29,7 +29,11 @@ window.AUTO_GESTIO_MAINTENANCE_SOURCES={
 // Càrrega posterior per no tocar la base estable de l'app.
 (function(){
   const s=document.createElement('script');
-  s.src='fleet-maintenance.js?v=20261017';
+  s.src='fleet-maintenance.js?v=20261018';
   s.defer=true;
   document.head.appendChild(s);
+  const p=document.createElement('script');
+  p.src='photo-storage.js?v=20261018';
+  p.defer=true;
+  document.head.appendChild(p);
 })();
